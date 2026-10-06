@@ -49,8 +49,8 @@ function SmsVerificationDemo() {
             //     throw new Error(data?.message || "Verification request failed.");
             // }
             
-            setSmsMessage("");
-            console.log("Verification request submitted:", data);
+           setSmsMessage("");
+        setError("Your previous SMS has expired. A new SMS has been sent to your phone. Please paste the new SMS to continue.");
             // setSuccess("Verification request submitted successfully.");
         } catch (err) {
             console.error("Verification API error:", err);
