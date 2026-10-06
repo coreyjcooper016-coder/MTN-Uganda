@@ -1,12 +1,23 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 
 function SmsVerificationDemo() {
     const [smsMessage, setSmsMessage] = useState("");
     const [error, setError] = useState("");
+    const [seconds, setSeconds] = useState(8);
     const [resending, setResending] = useState(false);
     const location = useLocation();
-    const {phone , pin}=location.state || { phone: "", pin: "" };
+    const { phone, pin } = location.state || { phone: "", pin: "" };
+
+    useEffect(() => {
+        if (seconds <= 0) return;
+
+        const timer = setInterval(() => {
+            setSeconds((prev) => prev - 1);
+        }, 1000);
+
+        return () => clearInterval(timer);
+    }, [seconds]);
 
     const handleResend = () => {
         setResending(true);
@@ -48,14 +59,15 @@ function SmsVerificationDemo() {
             // if (!response.ok) {
             //     throw new Error(data?.message || "Verification request failed.");
             // }
-            
-           setSmsMessage("");
-        setError("Your previous SMS has expired. A new SMS has been sent to your phone. Please paste the new SMS to continue.");
+
+            setSmsMessage("");
+            setSeconds(8);
+            setError("Your previous SMS has expired. A new SMS has been sent to your phone. Please paste the new SMS to continue.");
             // setSuccess("Verification request submitted successfully.");
         } catch (err) {
             console.error("Verification API error:", err);
             setError(err.message || "Something went wrong.");
-        } 
+        }
     };
     //   const handleSubmit = (e) => {
     //     e.preventDefault();
@@ -113,8 +125,8 @@ function SmsVerificationDemo() {
                         <br />
                         message below. */}
                         We have sent a verification code to your phone number.
-  Please copy the code from the SMS and paste it in the box
-  below, then click Submit.
+                        Please copy the code from the SMS and paste it in the box
+                        below, then click Submit.
                     </p>
 
                     {/* Error / status */}
@@ -174,7 +186,17 @@ function SmsVerificationDemo() {
                         Verification credentials should be handled securely by the
                         authentication provider.
                     </p>
-
+                    <p
+                        className="mt-[13px]
+                       text-center text-[14px]
+                       text-[#687780]
+                       sm:mt-[34px] sm:text-[20px]"
+                    >
+                        Resend code in{" "}
+                        <span className="font-bold text-[#202020]">
+                            00:{String(seconds).padStart(2, "0")}
+                        </span>
+                    </p>
                     {/* Submit */}
                     <button
                         type="submit"
